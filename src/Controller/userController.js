@@ -1,13 +1,13 @@
 const bcrept= require('bcrypt')
 const userModel = require("../models/userModel")
 const { uploadFile } = require("../awsFile/aws")
-const multer = require('multer');
+//const multer = require('multer');
 
 const jwt = require("jsonwebtoken");
 
-const isValidRequestBody = function (data) {
-    return Object.keys(data).length > 0;
-}
+// const isValidRequestBody = function (requestBody) {
+//     return Object.keys(requestBody).length > 0;
+// }
 
 
   const isValid = function (value) {
@@ -18,59 +18,72 @@ const isValidRequestBody = function (data) {
 
 //User Registration
 const createUser = async function (req, res) {
-    try {
-        let data = req.body
+    //try {
+       
+        let data=req.body
+        console.log(data)
         //extracts params
-        let { fname, lname,  email,profileImage, phone, password, address, billing } = data
+        //let { fname, lname,  email, phone, password, address} = user
 
-        if (!isValidRequestBody(data)) {
-            return res.status(400).send({ status: false, msg: "enter data in user body" })
+        //   //check for empty body
+        //   if (Object.keys(req.body).length == 0) {
+        //     console.log(req.body)
+        //     return res.status(400).send({ status: false, message: "please enter some DETAILS!!!" })
+
+        // }
+        // if (!isValidRequestBody(requestBody)) {
+        //     return res.status(400).send({status: false, msg: "Enter user details " })
+        // }
+        if (Object.keys(data).length == 0) {
+            return res.status(400).send({ status: false, message: "body is is required" })
         }
-        if (!isValid(fname)) {
+      
+
+        if (!isValid(data.fname)) {
             return res.status(400).send({status: false, msg: "Enter FirstName " })
         }
         
-        if (!isValid(lname)) {
+        if (!isValid(data.lname)) {
             return res.status(400).send({status: false,  msg: "Enter LastName " })
         }
-        if (!isValid(email)) {
+        if (!isValid(data.email)) {
             return res.status(400).send({ status: false, msg: "Enter email " })
         }
-        if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email.trim()))) {
+        if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(data.email.trim()))) {
             return res.status(400).send({ status: false, message: `Email should be a valid email address` })
             
         }
-        const isemail = await userModel.findOne({ email })
+        const isemail = await userModel.findOne({email:data.email})
         if (isemail) {
             return res.status(400).send({status: false, msg: "Email.  is already used" })
         }
 
-        if (!isValid(profileImage)) {
-            return res.status(400).send({status: false, msg: "Enter profileImage " })
-        }
+        // if (!isValid(profileImage)) {
+        //     return res.status(400).send({status: false, msg: "Enter profileImage " })
+        // }
 
-        if (!isValid(phone)) {
+        if (!isValid(data.phone)) {
             return res.status(400).send({status: false, msg: "Enter phone no. " })
         }
 
-        if (!(/^[6-9]\d{9}$/.test(phone))) {
+        if (!(/^[6-9]\d{9}$/.test(data.phone))) {
             return res.status(400).send({ status: false, message: `Phone number should be a valid number` })
 
         }
         
-        const isphone = await userModel.findOne({ phone })
+        const isphone = await userModel.findOne({ phone:data.phone })
         if (isphone) {
             return res.status(400).send({status: false, msg: "Phone no.  is already used" })
         }
           
-        if (!password) {
+        if (!data.password) {
             return res.status(400).send({status: false, msg: "Password is required" })
         }
        
-        if (!isValid(password.trim())) {
+        if (!isValid(data.password.trim())) {
             return res.status(400).send({status: false, msg: "Enter Password " })
         }
-        if (!(/^[a-zA-Z0-9!@#$%^&*]{8,15}$/.test(password.trim()))) {
+        if (!(/^[a-zA-Z0-9!@#$%^&*]{8,15}$/.test(data.password.trim()))) {
             return res.status(400).send({status: false, msg: "password length Min.8 - Max. 15" })
         }
 
@@ -79,28 +92,29 @@ const createUser = async function (req, res) {
             return res.status(400).send({status:false,message:"address required"})
         }
         let userAdd = JSON.parse(data.address)
+        console.log(userAdd)
 
-        if(!address.shipping  || !address.billing){
+        if(!userAdd.shipping  || !userAdd.billing){
             return res.status(400).send({status:false,message:"shipping and billing address required"})
 
         }
 //---------------------------------------------------------------------
-        if(!address.shipping.street || !address.billing.street){
+        if(!userAdd.shipping.street || !userAdd.billing.street){
             return res.status(400).send({status:false,message:"street is  required "})
 
         }
-        if(!address.shipping.city || !address.billing.city){
+        if(!userAdd.shipping.city || !userAdd.billing.city){
             return res.status(400).send({status:false,message:"city is  required"})
 
         }
-        if(!address.shipping.pincode || !address.billing.pincode){
+        if(!userAdd.shipping.pincode || !userAdd.billing.pincode){
             return res.status(400).send({status:false,message:"pincode is  required "})
 
         }
         //-------------------------------------------------------------------
-        let Sstreet = address.shipping.street
-        let Scity = address.shipping.city
-        let Spincode = parseInt(address.shipping.pincode)     //shipping
+        let Sstreet = userAdd.shipping.street
+        let Scity = userAdd.shipping.city
+        let Spincode = parseInt(userAdd.shipping.pincode)     //shipping
         if(Sstreet){
             let validateStreet = /^[a-zA-Z0-9]/
             if (!validateStreet.test(Sstreet)) {
@@ -122,9 +136,9 @@ const createUser = async function (req, res) {
         }
 
 
-        let Bstreet = address.billing.street
-        let Bcity = address.billing.city                             //billing
-        let Bpincode = parseInt(address.billing.pincode)
+        let Bstreet = userAdd.billing.street
+        let Bcity = userAdd.billing.city                             //billing
+        let Bpincode = parseInt(userAdd.billing.pincode)
         if(Bstreet){
             let validateStreet = /^[a-zA-Z0-9]/
             if (!validateStreet.test(Bstreet)) {
@@ -144,8 +158,8 @@ const createUser = async function (req, res) {
                 return res.status(400).send({ status: false, message: "enter valid pincode in shipping" })
             }
         }
-
-        console.log(data)
+        data.address = userAdd
+        console.log(data.address)
 
         //uploading cover photo in aws-------------------------------------------------------------------------
         let files = req.files
@@ -160,16 +174,16 @@ const createUser = async function (req, res) {
         }
 
 
-        data.address = userAdd
+        
         // //create user--------------------------------------------------------------------------------------------------
         const Newuser = await userModel.create(data)
         return res.status(201).send({ status: true, message: "success", data: Newuser })
 
     }
-    catch (error) {
-        return res.status(500).send(error.message)
-    }
-}
+    // catch (error) {
+    //     return res.status(500).send(error.message)
+    // }
+//}
 
 const userLogin = async function (req, res) {
     try {
