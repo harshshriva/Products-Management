@@ -1,6 +1,6 @@
 
 const userModel = require("../models/userModel")
-
+const jwt = require("jsonwebtoken");
 const isValidRequestBody = function (requestBody) {
     return Object.keys(requestBody).length > 0;
 }
@@ -88,5 +88,29 @@ const createUser = async function (req, res) {
     }
 }
 
+const userLogin = async function (req, res) {
+    try {
+        const requestBody = req.body;
+        const userName = requestBody.email;
+        const password = requestBody.password;
 
-module.exports.createUser=createUser
+        const loginUser = await userModel.findOne({ email: userName.toLowerCase().trim(), password: password, });
+        if (!loginUser) {
+            return res.status(400).send({ status: false, message: "Plz Enter Valid Credentials" });
+        }
+
+        const userID = loginUser._id;
+        const payLoad = { userId: userID };
+        const secretKey = "userp51";
+        const token = jwt.sign(payLoad, secretKey, { expiresIn: "6000000s" });
+
+        res.status(200).send({ status: true, message: "Login successful", data: {token,userID} });
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
+
+
+
+module.exports = {createUser , userLogin}
