@@ -11,11 +11,7 @@ const isValidRequestBody = function(requestBody) {
 }
 
 
-const isValid = function(value) {
-    if (typeof value === 'undefined' || value === null) return false
-    if (typeof value === 'string' && value.trim().length === 0) return false
-    return true;
-}
+
 
 //User Registration
 const createUser = async function(req, res) {
@@ -208,39 +204,28 @@ const userLogin = async function(req, res) {
     }
 };
 
-const isValidObjectId = function(ObjectId) {
-    return mongoose.Types.ObjectId.isValid(ObjectId);
-};
 
 
-
-const getuserById = async(req, res) => {
+const getuserById = async function (req, res) {
     try {
-        //  authorization  //
-        const userId = req.params.userId
+        //FETCH USERID FROM THE PARAMS-----
+        const userIdInParams = req.params.userId
+        console.log(userIdInParams)
+        let decodedToken = req.userId
+        console.log(decodedToken)
+        if(decodedToken != userIdInParams){
 
-        if (!isValidObjectId(userId)) {
-            return res.status(400).send({ status: false, message: "userId  is invalid" });
-        }
-        if (userId.length < 24 || userId.length > 24) {
-            return res.status(400).send({ status: false, msg: "Plz Enter Valid Length Of userId in Params" });
-        }
+            return res.status(403).send({status:false, message:"User Not authorized!" })
+         }
 
-        if (!(userId === req.userId)) {
-            return res.status(400).send({ status: false, msg: "unauthorized access" })
-        }
-        const searchprofile = await userModel.findById({ _id: userId })
-
-        if (!searchprofile) {
-            return res.status(404).send({ status: false, message: ' user profile  does not exist' })
-        }
-        return res.status(200).send({ status: true, message: 'user profile details', data: searchprofile })
-
-    } catch (error) {
-        return res.status(500).send({ success: false, error: error.message });
-    }
+        //MAKE BD CALL TO FIND USER DETAIL BY USERID----
+        let userDetail = await userModel.findOne({_id:userIdInParams})
+        res.status(200).send({ status: true,message: "User profile details",data:userDetail})
+        
+    } catch (err) {
+        return res.status(500).send({ status: false, Message: err.Message })
 }
-
+}
 //Update Profile //PUT /user/:userId/profile 
 
 const updateProfile = async function (req, res) {
@@ -459,8 +444,6 @@ const updateProfile = async function (req, res) {
         return res.status(500).send({ status: false, message: error.message })
     }
 }
-
-
 
 
 module.exports = { createUser, userLogin, getuserById, updateProfile }
