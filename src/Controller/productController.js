@@ -14,7 +14,7 @@ const createproducts = async function(req, res) {
         //upload to s3 and get the uploaded link
         // res.send the link back to frontend/postman
         let uploadedFileURL = await uploadFile(files[0])
-        data.profileImage = uploadedFileURL
+        data.productImage = uploadedFileURL
        
     } else {
         return res.status(400).send({ message: "profile cover image not given" })
