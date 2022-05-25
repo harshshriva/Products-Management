@@ -2,16 +2,14 @@ const bcrept = require('bcrypt')
 const userModel = require("../models/userModel")
 const { uploadFile } = require("../awsFile/aws")
 const mongoose = require('mongoose')
-    //const multer = require('multer');
+const validator = require("../validator/validator")
+   
 
 const jwt = require("jsonwebtoken");
 
 const isValidRequestBody = function(requestBody) {
     return Object.keys(requestBody).length > 0;
 }
-
-
-
 
 //User Registration
 const createUser = async function(req, res) {

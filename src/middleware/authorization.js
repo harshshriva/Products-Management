@@ -1,31 +1,32 @@
-
-const validator = require("../validator/Validator")
 const userModel = require("../models/userModel")
+const validator = require("../validator/Validator")
 
 const authorization = async function (req, res, next) {
 
     try {
+        let requestedUserId = req.userId;
+        let paramsBookId = req.params.userId;
+        if (paramsBookId.length < 24 || paramsBookId.length > 24) {
+            return res.status(400).send({ status: false, msg: "Plz Enter Valid Length Of BookId Params" });
+        }
+        
+        const isBookPresent = await userModel.findById({ _id: paramsBookId });
+        if (!isBookPresent) {
+            return res.status(404).send({ status: false, msg: "user is not present" });
+        }
 
+        let presentedUserId = isBookPresent.userId.toString().replace(/ObjectId\("(.*)"\)/, "$1");
+        if (requestedUserId !== presentedUserId) {
+            return res.status(401).send({ status: false, msg: "Unauthorized" });
+        }
 
-        const decodedToken = req.decodedToken;
-        let userId = req.params.userId
-
-
-        if (!validator.isObjectId(userId)) return res.status(400).send({ status: false, msg: "you can pass only object id in path params" })
-        let isPresentUser = await userModel.findById(userId)
-
-
-        if (!isPresentUser) return res.status(404).send({ status: false, msg: "User not found" })
-        if (userId != decodedToken.userId) return res.status(401).send({ status: false, msg: "unauthorize access " })
-
-
-        next()
-
+        next();
     } catch (err) {
-        console.log(err)
-        return res.status(500).send({ status: false, msg: "error occure for more information move on console", error: err.message })
+        res.status(500).send({ msg: "Internal Server Error", error: err.message });
     }
-}
+};
+
+
 
 
 
