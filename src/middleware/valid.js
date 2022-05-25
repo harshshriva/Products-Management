@@ -92,4 +92,4 @@ const validproduct = async function(req,res,next){
     }
      next()
 }
-module.exports = {validLogin}
+module.exports = {validLogin , validproduct }
