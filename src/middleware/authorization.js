@@ -16,7 +16,7 @@ const authorization = async function (req, res, next) {
 
 
         if (!isPresentUser) return res.status(404).send({ status: false, msg: "User not found" })
-        if (userId != decodedToken.userId) return res.status(401).send({ status: false, msg: "unauthorize access " })
+        //if (userId != decodedToken.userId) return res.status(401).send({ status: false, msg: "unauthorize access " })
 
 
         next()

@@ -3,11 +3,10 @@ const productModel = require("../models/product")
 
 
 
+
 const createproducts = async function(req, res) {
-    
 
     let data = req.body
-   
 
     let files = req.files
     if (files && files.length > 0) {
@@ -21,7 +20,7 @@ const createproducts = async function(req, res) {
     }
    
     const Newproduct = await productModel.create(data)
-    return res.status(201).send({ status: true, message: "success", data: Newuser })
+    return res.status(201).send({ status: true, message: "success", data: Newproduct })
 
 
 }

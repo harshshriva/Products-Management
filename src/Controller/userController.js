@@ -2,24 +2,26 @@ const bcrypt = require('bcrypt')
 const userModel = require("../models/userModel")
 const { uploadFile } = require("../awsFile/aws")
 const mongoose = require('mongoose')
-    //const multer = require('multer');
+const validator=require("../validator/validator")
+
 
 const jwt = require("jsonwebtoken");
 
-<<<<<<< HEAD
 const isValid = function(value) {
     if (typeof value === 'undefined' || value === null) return false
     if (typeof value === 'string' && value.trim().length === 0) return false
     return true;
-=======
-const isValidRequestBody = function(requestBody) {
-    return Object.keys(requestBody).length > 0;
->>>>>>> 20041b733db59ba7b8ad00bc39a120e32312e4de
 }
 
+//EMAIL VALIDATION BY REJEX
+const isValidEmail = (email) => {
+    return /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email.trim());
+  };
 
-
-
+const isValidRequestBody = (requestBody) => {
+    if (Object.keys(requestBody).length) return true
+    return false;
+}
 //User Registration
 
 const createUser = async function(req, res) {
@@ -74,14 +76,14 @@ const createUser = async function(req, res) {
         if (!isValid(data.password.trim())) {
             return res.status(400).send({ status: false, msg: "Enter Password " })
         }
-        if (!(/^[a-zA-Z0-9!@#$%^&*]{8,15}$/.test(data.password.trim()))) {
+        if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,15}$/.test(data.password.trim())) {
             return res.status(400).send({ status: false, msg: "password length Min.8 - Max. 15" })
             
         }
 
-        //hashing password and storing in database
-        const hashPassword = await bcrypt.hash(data.password, 10)
-        data.password = hashPassword
+      //hashing password and storing in database
+      const hashPassword = await bcrypt.hash(data.password, 10)
+      data.password = hashPassword
 
         //address---------------------------------------------------------------------------------------------------
         if (!data.address) {
@@ -181,28 +183,68 @@ const createUser = async function(req, res) {
     }
 }
 
-const userLogin = async function(req, res) {
-    try {
-        const requestBody = req.body;
-        const userName = requestBody.email;
-        const password = requestBody.password;
+// const userLogin = async function(req, res) {
+//     try {
+//         const requestBody = req.body;
+//         const userName = requestBody.email;
+//         const password = requestBody.password;
 
-        const loginUser = await userModel.findOne({ email: userName.toLowerCase().trim(), password: password, });
-        if (!loginUser) {
-            return res.status(400).send({ status: false, message: "Plz Enter Valid Credentials" });
-        }
+//         const findUser = await userModel.findOne({ email: userName.toLowerCase().trim(), password: password, });
+//         let checkPassWord = await bcrypt.compare(requestBody.password, findUser.password);
+//         if (!checkPassWord) {
+//             return res.status(400).send({ status: false, message: "Plz Enter Valid Credentials" });
+//         }
 
-        const userID = loginUser._id;
+//         const userID = findUser._id;
+//         const payLoad = { userId: userID };
+//         const secretKey = "userp51";
+//         const token = jwt.sign(payLoad, secretKey, { expiresIn: "10h" });
+
+//         res.status(200).send({ status: true, message: "Login successful", requestBody: {userID,token} });
+
+//     } catch (error) {
+//         res.status(500).send({ error: error.message });
+//     }
+// };
+const userLogin=async (req,res)=>{
+    try{
+    let data=req.body
+  
+    if(!isValid(data)) {
+      return res.status(400).send({ status: false, message: "Oops you forgot to enter details" });
+  }  
+  if(!isValid(data.email)) {
+    return res.status(400).send({ sataus: false, message: "Email is missing" });
+  }
+  if (!isValidEmail(data.email)) {
+    return res.status(400).send({ status: false, message: "Invalid Email format", });
+  }
+  let findUser = await userModel.findOne({ email:data.email })
+      if (!findUser) return res.status(404).send({ status: false, message: "User is not found" })
+  
+      // password checking
+      if(!data.password){
+        return res.status(400).send({ status: false, message: "Password is required" }); 
+    }
+    let checkPassWord = await bcrypt.compare(data.password, findUser.password);
+  
+      
+    if (!checkPassWord) return res.status(400).send({ status: false, message: "Incorrect password" })
+  
+      
+        const userID = findUser._id;
         const payLoad = { userId: userID };
         const secretKey = "userp51";
         const token = jwt.sign(payLoad, secretKey, { expiresIn: "10h" });
 
-        res.status(200).send({ status: true, message: "Login successful", data: {userID,token} });
-
-    } catch (error) {
-        res.status(500).send({ error: error.message });
+  
+      res.status(200).send({ status: true, message: "User login successfully", data: { userID: findUser._id, token: token } })
+    }catch (err) {
+      res.status(500).send({ status: false, error: err.message })
     }
-};
+  
+  }
+
 
 
 
