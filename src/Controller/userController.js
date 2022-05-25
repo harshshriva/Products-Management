@@ -200,7 +200,7 @@ const userLogin = async function(req, res) {
         const userID = loginUser._id;
         const payLoad = { userId: userID };
         const secretKey = "userp51";
-        const token = jwt.sign(payLoad, secretKey, { expiresIn: "6000000s" });
+        const token = jwt.sign(payLoad, secretKey, { expiresIn: "10h" });
 
         res.status(200).send({ status: true, message: "Login successful", data: { token, userID } });
     } catch (error) {
