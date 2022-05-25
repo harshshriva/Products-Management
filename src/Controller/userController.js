@@ -18,7 +18,7 @@ const jwt = require("jsonwebtoken");
 
 //User Registration
 const createUser = async function (req, res) {
-    //try {
+     try {
        
         let data=req.body
         console.log(data)
@@ -180,10 +180,10 @@ const createUser = async function (req, res) {
         return res.status(201).send({ status: true, message: "success", data: Newuser })
 
     }
-    // catch (error) {
-    //     return res.status(500).send(error.message)
-    // }
-//}
+    catch (error) {
+        return res.status(500).send(error.message)
+    }
+}
 
 const userLogin = async function (req, res) {
     try {
@@ -201,7 +201,7 @@ const userLogin = async function (req, res) {
         const secretKey = "userp51";
         const token = jwt.sign(payLoad, secretKey, { expiresIn: "6000000s" });
 
-        res.status(200).send({ status: true, message: "Login successful", data: {token,userID} });
+        res.status(200).send({ status: true, message: "Login successful", data: {userID,token} });
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
