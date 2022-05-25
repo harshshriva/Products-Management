@@ -105,6 +105,8 @@
 ## GET /user/:userId/profile (Authentication required)
 - Allow an user to fetch details of their profile.
 - Make sure that userId in url param and in token is same
+- Make sure that userId in url param and in token is same
+- Make sure that userId in url param and in token is same
 - __Response format__
   - _**On success**_ - Return HTTP status 200 and returns the user document. The response should be a JSON object like [this](#successful-response-structure)
   - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
