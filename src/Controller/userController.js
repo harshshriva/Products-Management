@@ -10,11 +10,7 @@ const jwt = require("jsonwebtoken");
 // }
 
 
-const isValid = function(value) {
-    if (typeof value === 'undefined' || value === null) return false
-    if (typeof value === 'string' && value.trim().length === 0) return false
-    return true;
-}
+
 
 //User Registration
 const createUser = async function(req, res) {
@@ -207,26 +203,26 @@ const userLogin = async function(req, res) {
     }
 };
 
-const getuserById = async(req, res) => {
+const getuserById = async function (req, res) {
     try {
-        //  authorization  //
-        const userId = req.params.userId
+        //FETCH USERID FROM THE PARAMS-----
+        const userIdInParams = req.params.userId
+        console.log(userIdInParams)
+        let decodedToken = req.userId
+        console.log(decodedToken)
+        if(decodedToken != userIdInParams){
 
-        if (!(userId === req.body.userId)) {
-            return res.status(400).send({ status: false, msg: "unauthorized access" })
-        }
-        const searchprofile = await userModel.findById({ _id: userId })
+            return res.status(403).send({status:false, message:"User Not authorized!" })
+         }
 
-        if (!searchprofile) {
-            return res.status(404).send({ status: false, message: ' user profile  does not exist' })
-        }
-        return res.status(200).send({ status: true, message: 'user profile details', data: searchprofile })
+        //MAKE BD CALL TO FIND USER DETAIL BY USERID----
+        let userDetail = await userModel.findOne({_id:userIdInParams})
+        res.status(200).send({ status: true,message: "User profile details",data:userDetail})
 
-    } catch (error) {
-        return res.status(500).send({ success: false, error: error.message });
+    } catch (err) {
+        return res.status(500).send({ status: false, Message: err.Message })
     }
 }
-
 
 
 module.exports = { createUser, userLogin, getuserById }

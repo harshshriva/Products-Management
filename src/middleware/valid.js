@@ -54,4 +54,40 @@ const validLogin = async function (req, res, next) {
 };
 
 
+const validproduct = async function(req,res,next){
+    const requestBody = req.body;
+    if (!isValidRequestBody(requestBody)) {
+        return res.status(400).send({ status: false, message: "please provide input credentials" });
+    }
+       
+    const  {title,description,price,currencyId,currencyFormat,isFreeShipping,productImage,style,availableSizes,installments} = requestBody
+
+    if (!isValid(title)) {
+        return res.status(400).send({ status: false, message: "please provide title credentials" });
+    }
+
+
+    if (!isValid(description)) {
+        return res.status(400).send({ status: false, message: "please provide description credentials" });
+    }
+
+
+    if (!isValid(currencyId)) {
+        return res.status(400).send({ status: false, message: "please provide currencyid credentials" });
+    }
+
+    if (!isValid(currencyFormat)) {
+        return res.status(400).send({ status: false, message: "please provide currencyformat credentials" });
+    }
+
+    if (!isValid(productImage)) {
+        return res.status(400).send({ status: false, message: "please provide productimage credentials" });
+    }
+
+    if (!isValid(style)) {
+        return res.status(400).send({ status: false, message: "please provide style credentials" });
+    }
+
+     next()
+}
 module.exports = {validLogin}
