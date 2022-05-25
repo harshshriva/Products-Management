@@ -12,6 +12,9 @@ const isValidRequestBody = function (requestBody) {
     return true;
 }
 
+const isValidenum = function (title) {
+    return ["S", "XS","M","X", "L","XXL", "XL"].indexOf(title) !== -1
+};
 
 const isValidemail = function (email) {
     const regexForemail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -80,14 +83,13 @@ const validproduct = async function(req,res,next){
         return res.status(400).send({ status: false, message: "please provide currencyformat credentials" });
     }
 
-    if (!isValid(productImage)) {
-        return res.status(400).send({ status: false, message: "please provide productimage credentials" });
-    }
-
     if (!isValid(style)) {
         return res.status(400).send({ status: false, message: "please provide style credentials" });
     }
 
+     if (!isValidenum(availableSizes)) {
+        return res.status(400).send({ status: false, message: "please provide valid avalable size" });
+    }
      next()
 }
 module.exports = {validLogin}
