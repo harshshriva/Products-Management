@@ -5,22 +5,26 @@ const authorization = async function (req, res, next) {
 
     try {
         let requestedUserId = req.userId;
-        let paramsBookId = req.params.userId;
-        if (paramsBookId.length < 24 || paramsBookId.length > 24) {
-            return res.status(400).send({ status: false, msg: "Plz Enter Valid Length Of BookId Params" });
+        let paramsuserId = req.params.userId;
+        if (paramsuserId.length < 24 || paramsuserId.length > 24) {
+            return res.status(400).send({ status: false, msg: "Plz Enter Valid Length Of userId Params" });
         }
         
-        const isBookPresent = await userModel.findById({ _id: paramsBookId });
-        if (!isBookPresent) {
+        const isuserPresent = await userModel.findById({ _id: paramsuserId });
+        if (!isuserPresent) {
             return res.status(404).send({ status: false, msg: "user is not present" });
         }
 
-        let presentedUserId = isBookPresent.userId.toString().replace(/ObjectId\("(.*)"\)/, "$1");
-        if (requestedUserId !== presentedUserId) {
-            return res.status(401).send({ status: false, msg: "Unauthorized" });
+        let presentedUserId = isuserPresent.userId
+        if (requestedUserId === presentedUserId) {
+            return res.status(201).send({ status: false, msg: "authorized" });
         }
+        // if(requestedUserId != presentedUserId){
+        //     return res.status(400).send({ status: false, msg: "Unauthorized" });   
+        // }
 
-        next();
+ next()
+
     } catch (err) {
         res.status(500).send({ msg: "Internal Server Error", error: err.message });
     }
