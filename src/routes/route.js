@@ -2,9 +2,8 @@ const express = require('express')
 const router = express.Router()
 const userController = require('../Controller/userController')
 const valid = require('../middleware/valid');
+const authentication = require('../middleware/auth')
 const productController = require("../Controller/productController")
-const authentication = require("../middleware/auth")
-
 
 
 router.post('/User', userController.createUser)
