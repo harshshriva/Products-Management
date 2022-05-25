@@ -1,13 +1,14 @@
 const bcrept = require('bcrypt')
 const userModel = require("../models/userModel")
 const { uploadFile } = require("../awsFile/aws")
+const mongoose = require('mongoose')
     //const multer = require('multer');
 
 const jwt = require("jsonwebtoken");
 
-// const isValidRequestBody = function (requestBody) {
-//     return Object.keys(requestBody).length > 0;
-// }
+const isValidRequestBody = function(requestBody) {
+    return Object.keys(requestBody).length > 0;
+}
 
 
 const isValid = function(value) {
@@ -207,12 +208,25 @@ const userLogin = async function(req, res) {
     }
 };
 
+const isValidObjectId = function(ObjectId) {
+    return mongoose.Types.ObjectId.isValid(ObjectId);
+};
+
+
+
 const getuserById = async(req, res) => {
     try {
         //  authorization  //
         const userId = req.params.userId
 
-        if (!(userId === req.body.userId)) {
+        if (!isValidObjectId(userId)) {
+            return res.status(400).send({ status: false, message: "userId  is invalid" });
+        }
+        if (userId.length < 24 || userId.length > 24) {
+            return res.status(400).send({ status: false, msg: "Plz Enter Valid Length Of userId in Params" });
+        }
+
+        if (!(userId === req.userId)) {
             return res.status(400).send({ status: false, msg: "unauthorized access" })
         }
         const searchprofile = await userModel.findById({ _id: userId })
