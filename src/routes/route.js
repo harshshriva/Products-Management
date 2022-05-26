@@ -3,7 +3,6 @@ const router = express.Router()
 const userController = require('../Controller/userController')
 const valid = require('../middleware/valid');
 const authenti= require('../middleware/authentication')
-const authorize = require('../middleware/authorization');
 const productController = require("../Controller/productController")
 
 // User Api
@@ -15,5 +14,6 @@ router.put('/user/:userId/profile',authenti.authentication, userController.updat
 
 // product api
 router.post('/products', valid.validproduct , productController.createproducts)
+router.get("/products",productController.getProductBYQuery)
 
 module.exports = router;
