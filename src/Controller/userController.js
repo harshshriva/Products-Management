@@ -192,10 +192,7 @@ const userLogin=async (req,res)=>{
   let findUser = await userModel.findOne({ email:data.email })
       if (!findUser) return res.status(404).send({ status: false, message: "User is not found" })
   
-      // password checking
-      if(!data.password){
-        return res.status(400).send({ status: false, message: "Password is required" }); 
-    }
+      
     let checkPassWord = await bcrypt.compare(data.password, findUser.password);
   
       
