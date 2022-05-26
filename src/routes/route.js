@@ -15,5 +15,5 @@ router.put('/user/:userId/profile',authenti.authentication,authorize.authorizati
 
 // product api
 router.post('/products', valid.validproduct , productController.createproducts)
-
+router.get("/products", productController.getProductBYQuery);
 module.exports = router;
