@@ -188,6 +188,7 @@ const createUser = async function(req, res) {
 const userLogin=async (req,res)=>{
     try{
     let data=req.body
+
   
     if(!isValid(data)) {
       return res.status(400).send({ status: false, message: "Oops you forgot to enter details" });
@@ -230,6 +231,8 @@ const userLogin=async (req,res)=>{
 const getuserById = async function (req, res) {
     try {
         //FETCH USERID FROM THE PARAMS-----
+       // req.setHeader("x-api-key", token);
+
         const userIdInParams = req.params.userId
         console.log(userIdInParams)
         let decodedToken = req.userId
@@ -238,6 +241,7 @@ const getuserById = async function (req, res) {
 
             return res.status(403).send({status:false, message:"User Not authorized!" })
          }
+         
 
         //MAKE BD CALL TO FIND USER DETAIL BY USERID----
         let userDetail = await userModel.findOne({_id:userIdInParams})
@@ -253,8 +257,14 @@ const updateProfile = async function (req, res) {
     try {
 
         const requestBody = req.body
+      const headers=req.userId
+      const params = req.params.userId
+      if (headers  != params) {
+          return res.status(400).send({statuse:false, message:"Unuthorized"})
+      }
         if (!validator.isValidRequestBody(requestBody)) return res.status(400).send({ status: false, msg: "please provide user updation details in form data of request body" })
         let { fname, lname, email, phone, password, address } = requestBody
+        
 
 
         const user = await userModel.findById(req.params.userId)

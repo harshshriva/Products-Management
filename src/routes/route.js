@@ -10,7 +10,7 @@ const productController = require("../Controller/productController")
 router.post('/User', userController.createUser)
 router.post('/login', valid.validLogin, userController.userLogin)
 router.get("/user/:userId/profile", authenti.authentication, userController.getuserById);
-router.put('/user/:userId/profile',authenti.authentication,authorize.authorization , userController.updateProfile);
+router.put('/user/:userId/profile',authenti.authentication, userController.updateProfile);
 
 
 // product api
