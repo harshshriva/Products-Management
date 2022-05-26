@@ -82,8 +82,9 @@ const createUser = async function(req, res) {
         }
 
       //hashing password and storing in database
-      const hashPassword = await bcrypt.hash(data.password, 10)
-      data.password = hashPassword
+       const salt = await bcrypt.genSalt(13);
+       const encryptedPassword = await bcrypt.hash(data.password, salt);
+       data.password=encryptedPassword
 
         //address---------------------------------------------------------------------------------------------------
         if (!data.address) {
@@ -175,7 +176,7 @@ const createUser = async function(req, res) {
 
         // //create user--------------------------------------------------------------------------------------------------
         const Newuser = await userModel.create(data)
-        return res.status(201).send({ status: true, message: "success", data: Newuser })
+        return res.status(201).send({ status: true, message: "User created successfully", data: Newuser })
 
     }
     catch (error) {

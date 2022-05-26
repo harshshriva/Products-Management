@@ -1,6 +1,16 @@
 const { uploadFile } = require("../awsFile/aws")
 const productModel = require("../models/product")
-
+const {
+    isValid, 
+    isValidRequestBody, 
+    isValidObjectId,
+    isStrictString,
+    isObjectId,
+    isValidEmail,
+    isValidPhone,
+    isValidPassword,
+    isValidAddress,
+    isValidPincode}=require("../validator/validator")
 
 
 
@@ -20,7 +30,7 @@ const createproducts = async function(req, res) {
     }
    
     const Newproduct = await productModel.create(data)
-    return res.status(201).send({ status: true, message: "success", data: Newproduct })
+    return res.status(201).send({ status: true, message: "Product created successfully", data: Newproduct })
 
 
 }
