@@ -188,23 +188,11 @@ const createUser = async function(req, res) {
 const userLogin=async (req,res)=>{
     try{
     let data=req.body
-  
-    if(!isValid(data)) {
-      return res.status(400).send({ status: false, message: "Oops you forgot to enter details" });
-  }  
-  if(!isValid(data.email)) {
-    return res.status(400).send({ sataus: false, message: "Email is missing" });
-  }
-  if (!isValidEmail(data.email)) {
-    return res.status(400).send({ status: false, message: "Invalid Email format", });
-  }
+
   let findUser = await userModel.findOne({ email:data.email })
       if (!findUser) return res.status(404).send({ status: false, message: "User is not found" })
   
-      // password checking
-      if(!data.password){
-        return res.status(400).send({ status: false, message: "Password is required" }); 
-    }
+      
     let checkPassWord = await bcrypt.compare(data.password, findUser.password);
   
       
@@ -230,6 +218,8 @@ const userLogin=async (req,res)=>{
 const getuserById = async function (req, res) {
     try {
         //FETCH USERID FROM THE PARAMS-----
+       // req.setHeader("x-api-key", token);
+
         const userIdInParams = req.params.userId
         console.log(userIdInParams)
         let decodedToken = req.userId
@@ -238,6 +228,7 @@ const getuserById = async function (req, res) {
 
             return res.status(403).send({status:false, message:"User Not authorized!" })
          }
+         
 
         //MAKE BD CALL TO FIND USER DETAIL BY USERID----
         let userDetail = await userModel.findOne({_id:userIdInParams})
@@ -253,8 +244,14 @@ const updateProfile = async function (req, res) {
     try {
 
         const requestBody = req.body
+      const headers=req.userId
+      const params = req.params.userId
+      if (headers  != params) {
+          return res.status(400).send({statuse:false, message:"Unuthorized"})
+      }
         if (!validator.isValidRequestBody(requestBody)) return res.status(400).send({ status: false, msg: "please provide user updation details in form data of request body" })
         let { fname, lname, email, phone, password, address } = requestBody
+        
 
 
         const user = await userModel.findById(req.params.userId)

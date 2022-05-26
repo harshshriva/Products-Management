@@ -1,6 +1,6 @@
 const { uploadFile } = require("../awsFile/aws")
 const productModel = require("../models/product")
-const validator =require("../validator/validator")
+const validator=require("../validator/validator")
 
 
 
@@ -89,8 +89,10 @@ const deleteProduct = async function (req, res) {
 
     try {
 
+
+
         const productId = req.params.productId
-        if (!validator.isObjectId(productId)) return res.status(400).send({ status: false, msg: "you can pass only valid object id in path params" })
+        if (!validator.isObjectId(productId)) return res.status(400).send({ status: false, msg: "you can pass only object id in path params" })
 
 
         const isProductPresent = await productModel.findById(productId)
@@ -120,4 +122,5 @@ const deleteProduct = async function (req, res) {
 
 }
 
-module.exports = {createproducts, getProductBYQuery, deleteProduct}
+
+module.exports = {createproducts,getProductBYQuery}
