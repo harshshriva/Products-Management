@@ -189,16 +189,6 @@ const userLogin=async (req,res)=>{
     try{
     let data=req.body
 
-  
-    if(!isValid(data)) {
-      return res.status(400).send({ status: false, message: "Oops you forgot to enter details" });
-  }  
-  if(!isValid(data.email)) {
-    return res.status(400).send({ sataus: false, message: "Email is missing" });
-  }
-  if (!isValidEmail(data.email)) {
-    return res.status(400).send({ status: false, message: "Invalid Email format", });
-  }
   let findUser = await userModel.findOne({ email:data.email })
       if (!findUser) return res.status(404).send({ status: false, message: "User is not found" })
   
