@@ -16,4 +16,5 @@ router.put('/user/:userId/profile',authenti.authentication, userController.updat
 router.post('/products', valid.validproduct , productController.createproducts)
 router.get("/products",productController.getProductBYQuery)
 
+router.get("/products", productController.getProductBYQuery);
 module.exports = router;

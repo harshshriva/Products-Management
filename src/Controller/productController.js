@@ -1,16 +1,6 @@
 const { uploadFile } = require("../awsFile/aws")
 const productModel = require("../models/product")
-const {
-    isValid, 
-    isValidRequestBody, 
-    isValidObjectId,
-    isStrictString,
-    isObjectId,
-    isValidEmail,
-    isValidPhone,
-    isValidPassword,
-    isValidAddress,
-    isValidPincode}=require("../validator/validator")
+const validator=require("../validator/validator")
 
 
 
@@ -34,7 +24,6 @@ const createproducts = async function(req, res) {
 
 
 }
-
 const getProductBYQuery = async function(req, res) {
 
     try {
