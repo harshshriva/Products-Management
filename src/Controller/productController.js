@@ -1,16 +1,6 @@
 const { uploadFile } = require("../awsFile/aws")
 const productModel = require("../models/product")
-const {
-    isValid, 
-    isValidRequestBody, 
-    isValidObjectId,
-    isStrictString,
-    isObjectId,
-    isValidEmail,
-    isValidPhone,
-    isValidPassword,
-    isValidAddress,
-    isValidPincode}=require("../validator/validator")
+const validator =require("../validator/validator")
 
 
 
@@ -93,5 +83,41 @@ const getProductBYQuery = async function(req, res) {
 
 }
 
+//Product Delete
 
-module.exports = {createproducts, getProductBYQuery}
+const deleteProduct = async function (req, res) {
+
+    try {
+
+        const productId = req.params.productId
+        if (!validator.isObjectId(productId)) return res.status(400).send({ status: false, msg: "you can pass only valid object id in path params" })
+
+
+        const isProductPresent = await productModel.findById(productId)
+        if (!isProductPresent) return res.status(404).send({ status: false, msg: "product not found" })
+
+
+        if (isProductPresent.isDeleted === true) return res.status(404).send({ status: false, msg: "product is already deleted" })
+        const productDelete = await productModel.findByIdAndUpdate(productId,
+            {
+                $set: {
+                    isDeleted: true,
+                    deletedAt: Date.now()
+                }
+            }, { new: true })
+
+
+        return res.status(200).send({ status: true, msg: "product deleted successfully", data: productDelete })
+
+
+    }
+
+    catch (err) {
+
+        return res.status(500).send({ status: false, msg: err.message })
+
+    }
+
+}
+
+module.exports = {createproducts, getProductBYQuery, deleteProduct}

@@ -15,5 +15,6 @@ router.put('/user/:userId/profile',authenti.authentication,authorize.authorizati
 
 // product api
 router.post('/products', valid.validproduct , productController.createproducts)
+router.delete('/products/:productId', productController.deleteProduct);
 
 module.exports = router;
