@@ -83,6 +83,18 @@ const getProductBYQuery = async function(req, res) {
 
 }
 
+const getProductById = async function(req, res) {
+    try {
+        let productId = req.params.productId
+        const searchProduct = await productModel.findOne({ _id: productId, isDeleted: false })
+        if (!searchProduct) {
+            return res.status(400).send({ status: false, msg: 'product does not exist with this prouct id or incorrect product id' })
+        }
+        res.status(200).send({ status: true, msg: 'sucess', data: searchProduct })
+    } catch (err) {
+        res.status(500).send({ status: false, Message: err.message })
+    }
+}
 //Product Delete
 
 const deleteProduct = async function (req, res) {
@@ -92,14 +104,17 @@ const deleteProduct = async function (req, res) {
 
 
         const productId = req.params.productId
-        if (!validator.isObjectId(productId)) return res.status(400).send({ status: false, msg: "you can pass only object id in path params" })
+        if (!validator.isObjectId(productId)) 
+        return res.status(400).send({ status: false, msg: "you can pass only object id in path params" })
 
 
         const isProductPresent = await productModel.findById(productId)
-        if (!isProductPresent) return res.status(404).send({ status: false, msg: "product not found" })
+        if (!isProductPresent)
+         return res.status(404).send({ status: false, msg: "product not found" })
 
 
-        if (isProductPresent.isDeleted === true) return res.status(404).send({ status: false, msg: "product is already deleted" })
+        if (isProductPresent.isDeleted === true) 
+        return res.status(404).send({ status: false, msg: "product is already deleted" })
         const productDelete = await productModel.findByIdAndUpdate(productId,
             {
                 $set: {
@@ -123,4 +138,4 @@ const deleteProduct = async function (req, res) {
 }
 
 
-module.exports = {createproducts,getProductBYQuery}
+module.exports = {createproducts,getProductBYQuery ,deleteProduct ,getProductById}

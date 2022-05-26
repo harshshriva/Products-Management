@@ -15,7 +15,8 @@ router.put('/user/:userId/profile',authenti.authentication, userController.updat
 // product api
 router.post('/products', valid.validproduct , productController.createproducts)
 router.get("/products",productController.getProductBYQuery)
-router.get("/products", productController.getProductBYQuery);
+router.get("/deleteProduct", productController.getProductBYQuery);
+router.get("/query", productController.getProductById);
 
 router.delete('/products/:productId', productController.deleteProduct);
 module.exports = router;
