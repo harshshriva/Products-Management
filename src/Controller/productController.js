@@ -83,4 +83,35 @@ const getProductBYQuery = async function(req, res) {
 
 }
 
+
+// const updateProduct = async function (req, res) {
+//     try {
+//         const productId = req.params.productId
+    
+//         const getProductById = await productModel.findOne({ _id: productId, isDeleted: false })
+//         if (!getProductById) {
+//             return res.status(404).send({ status: false, msg: "No product found to update" })
+//         }
+//         const data = req.body
+//         if (Object.keys(data).length == 0) {
+//             return res.status(400).send({ status: false, message: "body is required" })
+//         }
+//             const duplicateTitle = await bookModel.findOne({ title: data.title });
+//             if (duplicateTitle) {
+//                 return res.status(400).send({ status: false, message: "This book title already exists with another book" });
+//             }
+//             const duplicateISBN = await bookModel.findOne({ ISBN: data.ISBN })
+//             if (duplicateISBN) {
+//                 return res.status(400).send({ status: false, message: "This ISBN number already exists with another book" });
+//             }
+//             const updatedBook = await bookModel.findOneAndUpdate({ _id: bookId }, { ...data }, { new: true })
+//             return res.status(201).send({ status: true, message: "successfull", data: updatedBook })
+//         }
+//         else {
+//             return res.status(400).send({ status: false, message: "please provide required field to update" })
+//         }
+//     catch (err) {
+//         return res.status(500).send({ status: false, message: err.message })
+//     }}
+
 module.exports = {createproducts,getProductBYQuery}
