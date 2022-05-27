@@ -21,7 +21,11 @@ const isValidemail = function (email) {
     return regexForemail.test(email);
 };
 
-const validLogin = async function (req, res, next) {
+const isObjectId = function (ObjectId) {
+    return  mongoose.isValidObjectId(ObjectId)
+    }
+
+const validLogin =  function (req, res, next) {
     try {
         const queryParams = req.query;
         if (isValidRequestBody(queryParams)) {
@@ -57,7 +61,7 @@ const validLogin = async function (req, res, next) {
 };
 
 
-const validproduct = async function(req,res,next){
+const validproduct =  function(req,res,next){
     const requestBody = req.body;
     if (!isValidRequestBody(requestBody)) {
         return res.status(400).send({ status: false, message: "please provide input credentials" });
@@ -91,5 +95,32 @@ const validproduct = async function(req,res,next){
         return res.status(400).send({ status: false, message: "please provide valid avalable size" });
     }
      next()
+
 }
-module.exports = {validLogin , validproduct }
+     const getcartvalid =  function(req,res,next){
+        const requestBody = req.body;
+        if (!isValidRequestBody(requestBody)) {
+            return res.status(400).send({ status: false, message: "please provide input credentials" });
+        }
+           
+        const  {userId,totalPrice,totalItems,items} = requestBody
+         
+        if (!isValid(userId)) {
+            return res.status(400).send({ status: false, message: "please provide description credentials" });
+        }
+
+        if (!isObjectId(userId)) {
+            return res.status(400).send({ status: false, message: "please provide description credentials" });
+        }
+        
+        if (!/^\d{1,8}(?:\.\d{1,4})?$/.test(totalPrice)) {
+            return res.status(400).send({ status: false, message: "password should be: 8 to 15 characters, at least one letter and one number " });
+        }
+
+        if (!/^\d[1-70]?$/.test(totalItems)) {
+            return res.status(400).send({ status: false, message: "password should be: 8 to 15 characters, at least one letter and one number " });
+        }
+        next()
+     }
+
+module.exports = {validLogin , validproduct , getcartvalid}
