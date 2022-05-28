@@ -19,7 +19,7 @@ router.post('/products', valid.validproduct , productController.createproducts)
 router.get("/products",productController.getProductBYQuery)
 router.get("/deleteProduct", productController.getProductBYQuery);
 router.get("/query", productController.getProductById);
-
+router.put("/products/:productId",productController.updateProduct)
 router.delete('/products/:productId', productController.deleteProduct);
 
 // feature 3
