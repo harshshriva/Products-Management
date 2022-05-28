@@ -1,56 +1,88 @@
-const cartModel = require("../models/cartModel");
-const product = require("../models/product");
-const userModel = require("../models/userModel");
+const validator = require('../validator/validator')
+const productModel = require('../models/productModel')
+const userModel = require('../models/userModel')
+const cartModel = require('../models/cartModel')
 
-const cartcreate = async function(req,res){
-  // try {
-    const userId = "628e0bb2371ca83ff38c65f4";
-    let cart = await cartModel.findOne({ userId });
-    console.log(cart)
-    const { productId, quantity} = req.body;
-      let totalItems = 1
+const cartcreate = async function (req, res) {
+    try {
+        const userId = req.params.userId
+        const requestBody = req.body;
+        const { quantity, productId } = requestBody
+        let userIdFromToken = req.userId;
 
-   let totalPrice = await product.findOne({_id:productId}).select({price:1})
-       console.log(totalPrice)
-    if (cart) {
-      //cart exists for user
-      let itemIndex = cart.items.findIndex(p => p.productId === productId);
-      console.log(itemIndex)
-      if (itemIndex > -1) {
-        //product exists in the cart, update the quantity
+        const findUser = await userModel.findById({ _id: userId })
         
-        let productItem = cart.items[itemIndex];
-        console.log(productItem)
-        productItem.quantity = quantity;
-        cart.items[itemIndex] = productItem;
+        if (!findUser) {
+            return res.status(400).send({ status: false, message: `User doesn't exist by ${userId}` })
+        }
 
+        // Authentication & authorization
+        // if (findUser._id.toString() != userIdFromToken) {
+        //     res.status(401).send({ status: false, message: `Unauthorized access! User's info doesn't match` });
+        //     return
+        // }
+
+        const findProduct = await productModel.findOne({ _id: productId, isDeleted: false })
         
-      } else {
-        //product does not exists in cart, add new item
-        cart.items.push({ productId, quantity})
-        totalItems = totalItems+1,
-        totalPrice
-     
-      }
-      cart = await cart.save();
-      return res.status(201).send(cart);
-      // 1st case
-    } else {
-      // //no cart for user, create new cart
-      let  totalItems = 1
-      let totalPrice = await product.findOne({_id:productId}).select({price:1})
-      const newCart = await cartModel.create({
-        userId,
-        items: [{ productId, quantity }],
-        totalPrice : totalPrice, totalItems: totalItems
-      });
-      console.log(newCart)
-      return res.status(201).send(newCart);
+        if (!findProduct) {
+            return res.status(400).send({ status: false, message: `Product doesn't exist by ${productId}` })
+        }
+
+        const findCartOfUser = await cartModel.findOne({ userId: userId })
+        console.log(findCartOfUser)
+        //finding cart related to user.
+          //  cart exist for user
+          // if not
+        if (!findCartOfUser) {
+
+            //destructuring for the response body.
+            let cartData = {
+                userId: userId,
+                items: [{
+                    productId: productId,
+                    quantity: quantity,
+                }],
+                totalPrice: findProduct.price * quantity,
+                totalItems: 1
+            }
+           
+            const createCart = await cartModel.create(cartData)
+           
+            return res.status(201).send({ status: true, message: `Cart created successfully`, data: createCart })
+        }
+
+        if (findCartOfUser) {
+
+            //updating price when products get added or removed.
+            let price = findCartOfUser.totalPrice + (req.body.quantity * findProduct.price)
+            
+            let itemsArr = findCartOfUser.items
+            console.log(itemsArr)
+
+            //updating quantity.
+            for (i in itemsArr) {
+                if (itemsArr[i].productId.toString() === productId) {
+                    itemsArr[i].quantity += quantity
+
+                    let updatedCart = { items: itemsArr, totalPrice: price, totalItems: itemsArr.length }
+
+                    let responseData = await cartModel.findOneAndUpdate({ _id: findCartOfUser._id }, updatedCart, { new: true })
+
+                    return res.status(200).send({ status: true, message: `Product added successfully`, data: responseData })
+                }
+            }
+            itemsArr.push({ productId: productId, quantity: quantity }) //storing the updated prices and quantity to the newly created array.
+
+            let updatedCart = { items: itemsArr, totalPrice: price, totalItems: itemsArr.length }
+           
+            let responseData = await cartModel.findOneAndUpdate({ _id: findCartOfUser._id }, updatedCart, { new: true })
+            
+
+            return res.status(200).send({ status: true, message: `Product added successfully`, data: responseData })
+        }
+    } catch (err) {
+        res.status(500).send({ status: false, data: err.message });
     }
-  // } catch (err) {
-  //   console.log(err);
-  //   res.status(500).send("Something went wrong");
-  // }
 }
 
 

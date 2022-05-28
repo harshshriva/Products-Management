@@ -123,4 +123,24 @@ const validproduct =  function(req,res,next){
         next()
      }
 
-module.exports = {validLogin , validproduct , getcartvalid}
+     const postcart = function(req,res){
+
+         const requestBody = req.body;
+         if (!isValidRequestBody(requestBody)) {
+             return res.status(400).send({ status: false, message: "Please provide valid request body" })
+            }
+            
+        const  {userId,productId,quantity} = requestBody
+        if (!isValidObjectId(userId)) {
+            return res.status(400).send({ status: false, message: "Please provide valid User Id" })
+        }
+        if (!isValidObjectId(productId) || !validator.isValid(productId)) {
+            return res.status(400).send({ status: false, message: "Please provide valid Product Id" })
+        }
+
+        if (!isValid(quantity)) {
+            return res.status(400).send({ status: false, message: "Please provide valid quantity & it must be greater than zero." })
+        }
+     }
+
+module.exports = {validLogin , validproduct ,postcart, getcartvalid}
