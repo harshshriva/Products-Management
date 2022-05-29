@@ -28,7 +28,6 @@ const createUser = async function(req, res) {
         try {
 
         let data = req.body
-        console.log(data)
      
         if (Object.keys(data).length == 0) {
             return res.status(400).send({ status: false, message: "body is required" })
@@ -90,7 +89,7 @@ const createUser = async function(req, res) {
         if (!data.address) {
             return res.status(400).send({ status: false, message: "address required" })
         }
-        let userAdd = JSON.parse(data.address)
+        let userAdd = JSON.parse(data.address)//parse convert the string data into object with help of parse
         console.log(userAdd)
 
         if (!userAdd.shipping || !userAdd.billing) {
@@ -113,7 +112,7 @@ const createUser = async function(req, res) {
         //-------------------------------------------------------------------
         let Sstreet = userAdd.shipping.street
         let Scity = userAdd.shipping.city
-        let Spincode = parseInt(userAdd.shipping.pincode) //shipping
+        let Spincode = parseInt(userAdd.shipping.pincode) //parseInt convert string into integers/numbers
         if (Sstreet) {
             let validateStreet = /^[a-zA-Z0-9]/
             if (!validateStreet.test(Sstreet)) {
@@ -185,11 +184,12 @@ const createUser = async function(req, res) {
 }
 
 
-const userLogin=async (req,res)=>{
+const userLogin=async function (req,res){
     try{
     let data=req.body
 
-  let findUser = await userModel.findOne({ email:data.email , password:data.password})
+  let findUser = await userModel.findOne({ email:data.email , password:data.password })
+  console.log(findUser)
       if (!findUser) return res.status(404).send({ status: false, message: "email or password is incorrect" })    
      
         const userID = findUser._id;

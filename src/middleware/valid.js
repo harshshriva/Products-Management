@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const userModel = require("../models/userModel")
 
+
 const isValidRequestBody = function (requestBody) {
     return Object.keys(requestBody).length > 0;
 }
@@ -21,9 +22,12 @@ const isValidemail = function (email) {
     return regexForemail.test(email);
 };
 
-const isObjectId = function (ObjectId) {
-    return  mongoose.isValidObjectId(ObjectId)
-    }
+// const isObjectId = function (ObjectId) {
+//     return  mongoose.isValidObjectId(ObjectId)
+//     }
+const isValidObjectId = (ObjectId) => {
+    return mongoose.Types.ObjectId.isValid(ObjectId)
+}
 
 const validLogin =  function (req, res, next) {
     try {
@@ -114,16 +118,16 @@ const validproduct =  function(req,res,next){
         }
         
         if (!/^\d{1,8}(?:\.\d{1,4})?$/.test(totalPrice)) {
-            return res.status(400).send({ status: false, message: "password should be: 8 to 15 characters, at least one letter and one number " });
+            return res.status(400).send({ status: false, message: "total price should be valid" });
         }
 
         if (!/^\d[1-70]?$/.test(totalItems)) {
-            return res.status(400).send({ status: false, message: "password should be: 8 to 15 characters, at least one letter and one number " });
+            return res.status(400).send({ status: false, message: "Totalitem should be valid" });
         }
         next()
      }
 
-     const postcart = function(req,res){
+     const postcart = function(req,res,next){
 
          const requestBody = req.body;
          if (!isValidRequestBody(requestBody)) {
@@ -141,6 +145,27 @@ const validproduct =  function(req,res,next){
         if (!isValid(quantity)) {
             return res.status(400).send({ status: false, message: "Please provide valid quantity & it must be greater than zero." })
         }
+        next()
      }
 
-module.exports = {validLogin , validproduct ,postcart, getcartvalid}
+     const updateProduct=function(req, res, next){
+       
+        const requestBody = req.body;
+        if (!isValidRequestBody(requestBody)) {
+            return res.status(400).send({ status: false, message: "Please provide valid request body" })
+           }
+
+           //const  {productId} = requestBody
+           let params= req.params.productId
+        
+           if (!isValidObjectId (params)) {
+            return res.status(400).send({ status: false, message: "product Id is Not Valid" });
+
+            
+        }
+
+        
+        next()
+     }
+
+module.exports = {validLogin , validproduct ,postcart, getcartvalid,updateProduct}

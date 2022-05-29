@@ -8,8 +8,8 @@ const cartcreate = async function (req, res) {
         const userId = req.params.userId
         const requestBody = req.body;
         const { quantity, productId } = requestBody
-        let userIdFromToken = req.userId;
-
+        let token = req.userId;
+      //Go valid.js for validation
         const findUser = await userModel.findById({ _id: userId })
         
         if (!findUser) {
@@ -17,12 +17,13 @@ const cartcreate = async function (req, res) {
         }
 
         // Authentication & authorization
-        // if (findUser._id.toString() != userIdFromToken) {
+        // if (findUser._id.toString() != token) {
         //     res.status(401).send({ status: false, message: `Unauthorized access! User's info doesn't match` });
         //     return
         // }
 
         const findProduct = await productModel.findOne({ _id: productId, isDeleted: false })
+        console.log(findProduct)
         
         if (!findProduct) {
             return res.status(400).send({ status: false, message: `Product doesn't exist by ${productId}` })
@@ -59,7 +60,7 @@ const cartcreate = async function (req, res) {
             let itemsArr = findCartOfUser.items
             console.log(itemsArr)
 
-            //updating quantity.
+            //updating quantity.    ///use of for in loop
             for (i in itemsArr) {
                 if (itemsArr[i].productId.toString() === productId) {
                     itemsArr[i].quantity += quantity
@@ -88,9 +89,14 @@ const cartcreate = async function (req, res) {
 
 
 // const cartcreate = 
-// 3
+// Go to valid js for validation
 const getCart = async function (req, res) {
   try {
+      let user=req.userId
+      let params=req.params.userId
+      if(params != user){
+          return res.status(400).send("Unathorized")
+      }
       let data = await cartModel.find({ userId: req.params.userId, isDeleted: false })
       if (!data)
           return res.status(404).send({ status: false, message: "Cart not found." })
@@ -104,6 +110,11 @@ const getCart = async function (req, res) {
 //4
 const deleteCart = async function (req, res) {
   try {
+    let user=req.userId
+    let params=req.params.userId
+    if(params != user){
+        return res.status(400).send("Unathorized")
+    }
       let data = await cartModel.findOneAndUpdate({ userId: req.params.userId, isDeleted: false }, { isDeleted: true, deletedAt: new Date() })
       if (!data)
           return res.status(404).send({ status: false, message: "Cart not found." })
