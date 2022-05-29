@@ -135,10 +135,10 @@ const validproduct =  function(req,res,next){
             }
             
         const  {userId,productId,quantity} = requestBody
-        if (!isValidObjectId(userId)) {
+        if (!isObjectId(userId)) {
             return res.status(400).send({ status: false, message: "Please provide valid User Id" })
         }
-        if (!isValidObjectId(productId) || !validator.isValid(productId)) {
+        if (!isObjectId(productId) || !validator.isValid(productId)) {
             return res.status(400).send({ status: false, message: "Please provide valid Product Id" })
         }
 
