@@ -2,7 +2,6 @@ const validator = require('../validator/validator')
 const productModel = require('../models/productModel')
 const userModel = require('../models/userModel')
 const cartModel = require('../models/cartModel')
-const mongoose=require('mongoose')
 
 
 const cartcreate = async function (req, res) {

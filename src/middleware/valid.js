@@ -168,6 +168,33 @@ const validproduct =  function(req,res,next){
         next()
      }
 
+     const creatOrder =  function(req,res,next){
+        const requestBody = req.body;
+        if (!isValidRequestBody(requestBody)) {
+            return res.status(400).send({ status: false, message: "please provide input credentials" });
+        }
+           
+        const  {userId,totalPrice,totalItems} = requestBody
+         
+        if (!isValid(userId)) {
+            return res.status(400).send({ status: false, message: "please provide description credentials" });
+        }
+
+        if (!isValidObjectId(userId)) {
+            return res.status(400).send({ status: false, message: "please provide description credentials" });
+        }
+        
+        if (!/^\d{1,8}(?:\.\d{1,4})?$/.test(totalPrice)) {
+            return res.status(400).send({ status: false, message: "total price should be valid" });
+        }
+
+        if (!/^\d[1-70]?$/.test(totalItems)) {
+            return res.status(400).send({ status: false, message: "Totalitem should be valid" });
+        }
+        next()
+     }
+
+
     
 
-module.exports = {validLogin , validproduct ,postcart, getcartvalid,updateProduct}
+module.exports = {validLogin , validproduct ,postcart, getcartvalid,updateProduct,creatOrder}
