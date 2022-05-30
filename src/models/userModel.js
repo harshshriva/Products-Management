@@ -10,7 +10,7 @@ const userSchema=new mongoose.Schema({
                 }, message: 'Please fill a valid email address', isAsync: false
             }},
         profileImage: {type:String, required:true}, // s3 link
-        phone: {type:String, unique:true, unique:true,
+        phone: {type:String, unique:true, required:true,
             validate: {
                 validator: function (phone) {
                     return /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/.test(phone)

@@ -38,7 +38,7 @@ const getProductBYQuery = async function(req, res) {
                 obj.availableSizes = availableSizes
             }
             if (title) {
-                obj.title = { $regex: title, $options: " " }
+                obj.title = { $regex: title, $options: 'i' };//i defined case sensitive
             }
             if (priceGreaterThan) {
                 obj.price = { $gt: priceGreaterThan }

@@ -5,7 +5,7 @@ const valid = require('../middleware/valid');
 const authenti= require('../middleware/authentication')
 const productController = require("../Controller/productController");
 const cartController = require("../Controller/cartController");
-
+const orderController=require("../Controller/orderController")
 
 // User Api
 router.post('/User', userController.createUser)
@@ -22,9 +22,12 @@ router.put("/products/:productId",valid.updateProduct,productController.updatePr
 router.delete('/products/:productId', productController.deleteProduct);
 
 // feature 3
-router.post('/cart/:userId' , cartController.cartcreate)
+router.post('/cart/:userId' ,authenti.authentication, cartController.cartcreate)
 router.get("/users/:userId/cart",authenti.authentication, cartController.getCart);
-
+router.put("/users/:userId/cart",authenti.authentication, cartController.updateCart)
 router.delete('/cart/:userId',authenti.authentication, cartController.deleteCart);
+
+//feture 4
+router.post('/users/:userId/orders',authenti.authentication,valid.creatOrder, orderController.creatOrder)
 
 module.exports = router;
