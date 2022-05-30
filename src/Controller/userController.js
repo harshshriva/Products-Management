@@ -189,16 +189,9 @@ const userLogin=async (req,res)=>{
     try{
     let data=req.body
 
-  let findUser = await userModel.findOne({ email:data.email })
-      if (!findUser) return res.status(404).send({ status: false, message: "User is not found" })
-  
-      
-    let checkPassWord = await bcrypt.compare(data.password, findUser.password);
-  
-      
-    if (!checkPassWord) return res.status(400).send({ status: false, message: "Incorrect password" })
-  
-      
+  let findUser = await userModel.findOne({ email:data.email , password:data.password})
+      if (!findUser) return res.status(404).send({ status: false, message: "email or password is incorrect" })    
+     
         const userID = findUser._id;
         const payLoad = { userId: userID };
         const secretKey = "userp51";
