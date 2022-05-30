@@ -1,3 +1,4 @@
+const mongoose=require('mongoose')
 const { uploadFile } = require("../awsFile/aws")
 const productModel = require("../models/productModel")
 const validator=require("../validator/validator")
@@ -83,7 +84,7 @@ const getProductBYQuery = async function(req, res) {
 
 }
 
-const getProductById = async function(req, res) {
+const getProductById = async function(req, res) {//Go to valid js for validation
     try {
         let productId = req.params.productId
         const searchProduct = await productModel.findOne({ _id: productId, isDeleted: false })
@@ -97,14 +98,9 @@ const getProductById = async function(req, res) {
 }
 
 const updateProduct = async(req,res)=>{
-    try{
+      try{
          let productId = req.params.productId
-
-         let isValidproductID = mongoose.Types.ObjectId.isValid(productId);//check if objectId is objectid
-         if (!isValidproductID) {
-             return res.status(400).send({ status: false, message: "product Id is Not Valid" });
-         }
-
+        
          let product = await productModel.findOne({_id:productId,isDeleted:false})
 
          if(!product)    return res.status(400).send({status:false,message:"product dont exist"})
