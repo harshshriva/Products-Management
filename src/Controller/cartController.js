@@ -3,6 +3,7 @@ const productModel = require('../models/productModel')
 const userModel = require('../models/userModel')
 const cartModel = require('../models/cartModel')
 
+
 const cartcreate = async function (req, res) {
     try {
         const userId = req.params.userId
@@ -105,6 +106,7 @@ const getCart = async function (req, res) {
       res.status(500).send({ status: false, message: error.message })
   }
 }
+
 
 
 //4

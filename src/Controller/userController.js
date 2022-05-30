@@ -3,6 +3,7 @@ const userModel = require("../models/userModel")
 const { uploadFile } = require("../awsFile/aws")
 const mongoose = require('mongoose')
 const validator=require("../validator/validator")
+const cryptr=require('cryptr')
 
 
 const jwt = require("jsonwebtoken");
@@ -80,10 +81,10 @@ const createUser = async function(req, res) {
             
         }
 
-      //hashing password and storing in database
-       const salt = await bcrypt.genSalt(13);
-       const encryptedPassword = await bcrypt.hash(data.password, salt);
-       data.password=encryptedPassword
+    const salt = await bcrypt.genSalt(10);
+    const passwordhash=await bcrypt.hash(data.password,salt)
+    data.password=passwordhash
+    console.log(passwordhash)
 
         //address---------------------------------------------------------------------------------------------------
         if (!data.address) {
@@ -188,9 +189,14 @@ const userLogin=async function (req,res){
     try{
     let data=req.body
 
-  let findUser = await userModel.findOne({ email:data.email , password:data.password })
+
+  let findUser = await userModel.findOne({ email:data.email})
   console.log(findUser)
-      if (!findUser) return res.status(404).send({ status: false, message: "email or password is incorrect" })    
+      if (!findUser) return res.status(404).send({ status: false, message: "email or password is incorrect" })  
+      
+      const passwordDecrept=await bcrypt.compare(data.password, findUser.password)
+      console.log(passwordDecrept)
+      if (!passwordDecrept) return res.status(400).send({ status: false, message: " password is incorrect" })  
      
         const userID = findUser._id;
         const payLoad = { userId: userID };

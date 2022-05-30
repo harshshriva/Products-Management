@@ -24,7 +24,6 @@ router.delete('/products/:productId', productController.deleteProduct);
 // feature 3
 router.post('/cart/:userId' , cartController.cartcreate)
 router.get("/users/:userId/cart",authenti.authentication, cartController.getCart);
-
 router.delete('/cart/:userId',authenti.authentication, cartController.deleteCart);
 
 module.exports = router;

@@ -168,4 +168,6 @@ const validproduct =  function(req,res,next){
         next()
      }
 
+    
+
 module.exports = {validLogin , validproduct ,postcart, getcartvalid,updateProduct}
