@@ -110,16 +110,25 @@ const getCart = async function (req, res) {
 //4
 const deleteCart = async function (req, res) {
   try {
-    let user=req.userId
-    let params=req.params.userId
-    if(params != user){
-        return res.status(400).send("Unathorized")
-    }
-      let data = await cartModel.findOneAndUpdate({ userId: req.params.userId, isDeleted: false }, { isDeleted: true, deletedAt: new Date() })
-      if (!data)
-          return res.status(404).send({ status: false, message: "Cart not found." })
-      return res.status(200).send({ status: true, message: "Cart deleted successfully" , data:data })
-  } catch (error) {
+    const isCartExist = await cartModel.findOne({ userId: req.params.userId })
+    if (!isCartExist) return res.status(404).send({ status: false, msg: "No cart found" })
+
+
+    const saveCart = {}
+    if (!('$set' in saveCart)) saveCart["$set"] = {}
+
+    
+    saveCart['$set']['items'] = []
+    saveCart['$set']['totalPrice'] = 0
+    saveCart['$set']['totalItems'] = 0
+
+
+    const saveCartData = await cartModel.findOneAndUpdate({ userId: req.params.userId }, saveCart, { new: true })
+    //console.log(saveCartData, "saveCartData")
+    return res.status(204).send({ status: true, message: "Cart is deleted", data: saveCartData })
+
+
+} catch (error) {
       res.status(500).send({ status: false, message: error.message })
   }
 }
