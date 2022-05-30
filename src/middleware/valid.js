@@ -113,7 +113,7 @@ const validproduct =  function(req,res,next){
             return res.status(400).send({ status: false, message: "please provide description credentials" });
         }
 
-        if (!isObjectId(userId)) {
+        if (!isValidObjectId(userId)) {
             return res.status(400).send({ status: false, message: "please provide description credentials" });
         }
         
@@ -135,10 +135,10 @@ const validproduct =  function(req,res,next){
             }
             
         const  {userId,productId,quantity} = requestBody
-        if (!isObjectId(userId)) {
+        if (!isValidObjectId(userId)) {
             return res.status(400).send({ status: false, message: "Please provide valid User Id" })
         }
-        if (!isObjectId(productId) || !validator.isValid(productId)) {
+        if (!isValidObjectId(productId) || !validator.isValid(productId)) {
             return res.status(400).send({ status: false, message: "Please provide valid Product Id" })
         }
 

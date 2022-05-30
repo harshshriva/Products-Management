@@ -22,8 +22,9 @@ router.put("/products/:productId",valid.updateProduct,productController.updatePr
 router.delete('/products/:productId', productController.deleteProduct);
 
 // feature 3
-router.post('/cart/:userId' , cartController.cartcreate)
+router.post('/cart/:userId' ,authenti.authentication, cartController.cartcreate)
 router.get("/users/:userId/cart",authenti.authentication, cartController.getCart);
+router.put("/users/:userId/cart",authenti.authentication, cartController.updateCart)
 router.delete('/cart/:userId',authenti.authentication, cartController.deleteCart);
 
 module.exports = router;
