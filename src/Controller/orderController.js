@@ -5,7 +5,7 @@ const userModel = require("../models/userModel")
 
 const creatOrder=async function(req, res){
     let requestBody=req.body
-
+//let {items,productId,quantity}=requestBody
 
     let user=req.userId
     let userId=req.params.userId
@@ -17,13 +17,14 @@ const creatOrder=async function(req, res){
     if(userId != user){
         return res.status(400).send("Unathorized")
     }
-
+  let cartDetails=await cartModel.find({items})
+  return res.status(200).send({status:true,msg:"Cart data",data:cartDetails})
     
 
     let Order=await orderModel.create(requestBody)
         return res.status(200).send({ statuse:true,msg:"Order exicuted successfully", data:Order})
     
-
+    
 }
 
 

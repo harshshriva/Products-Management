@@ -76,7 +76,7 @@ const createUser = async function(req, res) {
         if (!isValid(data.password.trim())) {
             return res.status(400).send({ status: false, msg: "Enter Password " })
         }
-        if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,15}$/.test(data.password.trim())) {
+        if (!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/.test(data.password.trim())) {
             return res.status(400).send({ status: false, msg: "password length Min.8 - Max. 15" })
             
         }

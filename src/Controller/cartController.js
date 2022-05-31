@@ -36,7 +36,7 @@ const cartcreate = async function (req, res) {
           //  cart exist for user
           // if not
         if (!findCartOfUser) {
-
+        
             //destructuring for the response body.
             let cartData = {
                 userId: userId,
@@ -68,7 +68,7 @@ const cartcreate = async function (req, res) {
 
                     let updatedCart = { items: itemsArr, totalPrice: price, totalItems: itemsArr.length }
 
-                    let responseData = await cartModel.findOneAndUpdate({ _id: findCartOfUser._id }, updatedCart, { new: true })
+                    let responseData = await cartModel.findOneAndUpdate({ _id: findCartOfUser._id }, updatedCart, { new: true }).select({_id:0})
 
                     return res.status(200).send({ status: true, message: `Product added successfully`, data: responseData })
                 }
@@ -78,7 +78,7 @@ const cartcreate = async function (req, res) {
             let updatedCart = { items: itemsArr, totalPrice: price, totalItems: itemsArr.length }
            
             let responseData = await cartModel.findOneAndUpdate({ _id: findCartOfUser._id }, updatedCart, { new: true })
-            
+   
 
             return res.status(200).send({ status: true, message: `Product added successfully`, data: responseData })
         }
