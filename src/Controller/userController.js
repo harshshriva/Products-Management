@@ -3,9 +3,7 @@ const userModel = require("../models/userModel")
 const { uploadFile } = require("../awsFile/aws")
 const mongoose = require('mongoose')
 const validator=require("../validator/validator")
-const cryptr=require('cryptr')
-
-
+//const cryptr=require('cryptr')
 const jwt = require("jsonwebtoken");
 
 const isValid = function(value) {
@@ -14,15 +12,7 @@ const isValid = function(value) {
     return true;
 }
 
-//EMAIL VALIDATION BY REJEX
-const isValidEmail = (email) => {
-    return /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email.trim());
-  };
 
-const isValidRequestBody = (requestBody) => {
-    if (Object.keys(requestBody).length) return true
-    return false;
-}
 //User Registration
 
 const createUser = async function(req, res) {
@@ -56,7 +46,7 @@ const createUser = async function(req, res) {
 
        
         if (!isValid(data.phone)) {
-            return res.status(400).send({ status: false, msg: "Enter phone no. " })
+            return res.status(400).send({ status: false, msg: "Enter phone Number " })
         }
 
         if (!(/^[6-9]\d{9}$/.test(data.phone))) {
@@ -69,14 +59,10 @@ const createUser = async function(req, res) {
             return res.status(400).send({ status: false, msg: "Phone no.  is already used" })
         }
 
-        if (!data.password) {
-            return res.status(400).send({ status: false, msg: "Password is required" })
-        }
-
         if (!isValid(data.password.trim())) {
             return res.status(400).send({ status: false, msg: "Enter Password " })
         }
-        if (!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/.test(data.password.trim())) {
+        if (!/^[a-zA-Z0-9!@#$%^&*]{8,15}$/.test(data.password.trim())) {
             return res.status(400).send({ status: false, msg: "password length Min.8 - Max. 15" })
             
         }

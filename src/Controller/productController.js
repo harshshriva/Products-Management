@@ -87,6 +87,20 @@ const getProductBYQuery = async function(req, res) {
 const getProductById = async function(req, res) {//Go to valid js for validation
     try {
         let productId = req.params.productId
+
+        if (productId.length < 24 || productId.length > 24) {
+            return res.status(400).send({ status: false, msg: "Plz Enter Valid Length Of productId in Params" });
+        }
+
+        if (!validator.isValidObjectId(productId)) {
+            return res.status(400).send({ status: false, message: "please provide valid productId" });
+        }
+
+        let bData = await productModel.findById(productId);
+        if (!bData) {
+            return res.status(404).send({ status: false, message: "Data Not Found" });
+        }
+
         const searchProduct = await productModel.findOne({ _id: productId, isDeleted: false })
         if (!searchProduct) {
             return res.status(400).send({ status: false, msg: 'product does not exist with this prouct id or incorrect product id' })

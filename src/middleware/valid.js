@@ -53,7 +53,7 @@ const validLogin =  function (req, res, next) {
         if (!isValid(password)) {
             return res.status(400).send({ status: false, message: "password is required" });
         }
-        if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,15}$/.test(password)) {
+        if (!/^[a-zA-Z0-9!@#$%^&*]{8,15}$/.test(password)) {
             return res.status(400).send({ status: false, message: "password should be: 8 to 15 characters, at least one letter and one number " });
         }
 
@@ -174,13 +174,13 @@ const validproduct =  function(req,res,next){
             return res.status(400).send({ status: false, message: "please provide input credentials" });
         }
            
-        const  {userId,totalPrice,totalItems} = requestBody
+        const  {cartId,totalPrice,totalItems} = requestBody
          
-        if (!isValid(userId)) {
+        if (!isValid(cartId)) {
             return res.status(400).send({ status: false, message: "please provide description credentials" });
         }
 
-        if (!isValidObjectId(userId)) {
+        if (!isValidObjectId(cartId)) {
             return res.status(400).send({ status: false, message: "please provide description credentials" });
         }
         

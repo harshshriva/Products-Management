@@ -1,5 +1,6 @@
 const orderModel=require("../models/orderModel")
 const userModel = require("../models/userModel")
+const cartModel=require("../models/cartModel")
 //const validator=require("../validator/validator")
 const mongoose=require('mongoose')
 
@@ -9,7 +10,7 @@ const creatOrder = async(req, res) => {
         const requestBody = req.body;
         const userIdFromToken = req.userId;
         
-        const {  cancellable, status } = requestBody;
+        const {cartId,  cancellable, status } = requestBody;
         
         const searchUser = await userModel.findOne({ _id: userId });
         if (!searchUser) {
