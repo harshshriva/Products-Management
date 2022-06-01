@@ -374,7 +374,7 @@ Refer below sample
  ![A Postman collection and request sample](assets/Postman-collection-sample.png)
 
 ## Response
-
+        
 ### Successful Response structure
 ```yaml
 {

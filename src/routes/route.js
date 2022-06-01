@@ -29,5 +29,6 @@ router.delete('/cart/:userId',authenti.authentication, cartController.deleteCart
 
 //feture 4
 router.post('/users/:userId/orders',authenti.authentication,valid.creatOrder, orderController.creatOrder)
+router.put('/users/:userId/orders',authenti.authentication, orderController.updateOrderDetail)
 
 module.exports = router;

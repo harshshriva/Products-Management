@@ -138,8 +138,10 @@ const updateProduct = async(req,res)=>{
              return res.status(400).send({ status: false, message: "price is number" })
         }
         if(Number(data.price)<=0)      return res.status(400).send({ status: false, message: "price must be greater than 0" })
-        
-        product.price = data.price
+      const price=await productModel.findOne({_id:productId})
+      console.log(price)
+        product.price = price
+        console.log(price)
     }
 
         //------------------------------------currencyId-----------------------------------------------------------
@@ -170,8 +172,8 @@ const updateProduct = async(req,res)=>{
                  //upload to s3 and get the uploaded link
                  // res.send the link back to frontend/postman
                  let image = files[0].originalname.split(".")
-                 if(!['png','jpg'].includes(image[image.length-1])){
-                    return res.status(400).send({ status: false, message: "must be png and jpg" })
+                 if(!['png','jpg','pdf'].includes(image[image.length-1])){
+                    return res.status(400).send({ status: false, message: "must be png , jpg and pdf" })
 
                  }
                  let uploadedFileURL= await uploadFile( files[0] )
