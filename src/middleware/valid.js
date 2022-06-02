@@ -2,22 +2,22 @@ const mongoose = require('mongoose')
 const userModel = require("../models/userModel")
 
 
-const isValidRequestBody = function (requestBody) {
+const isValidRequestBody = function(requestBody) {
     return Object.keys(requestBody).length > 0;
 }
 
 
-  const isValid = function (value) {
+const isValid = function(value) {
     if (typeof value === 'undefined' || value === null) return false
     if (typeof value === 'string' && value.trim().length === 0) return false
     return true;
 }
 
-const isValidenum = function (title) {
-    return ["S", "XS","M","X", "L","XXL", "XL"].indexOf(title) !== -1
+const isValidenum = function(title) {
+    return ["S", "XS", "M", "X", "L", "XXL", "XL"].indexOf(title) !== -1
 };
 
-const isValidemail = function (email) {
+const isValidemail = function(email) {
     const regexForemail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     return regexForemail.test(email);
 };
@@ -29,7 +29,7 @@ const isValidObjectId = (ObjectId) => {
     return mongoose.Types.ObjectId.isValid(ObjectId)
 }
 
-const validLogin =  function (req, res, next) {
+const validLogin = function(req, res, next) {
     try {
         const queryParams = req.query;
         if (isValidRequestBody(queryParams)) {
@@ -58,20 +58,19 @@ const validLogin =  function (req, res, next) {
         }
 
         next();
-    }
-    catch (err) {
+    } catch (err) {
         res.status(500).send({ error: err.message });
     }
 };
 
 
-const validproduct =  function(req,res,next){
+const validproduct = function(req, res, next) {
     const requestBody = req.body;
     if (!isValidRequestBody(requestBody)) {
         return res.status(400).send({ status: false, message: "please provide input credentials" });
     }
-       
-    const  {title,description,price,currencyId,currencyFormat,isFreeShipping,productImage,style,availableSizes,installments} = requestBody
+
+    const { title, description, price, currencyId, currencyFormat, isFreeShipping, productImage, style, availableSizes, installments } = requestBody
 
     if (!isValid(title)) {
         return res.status(400).send({ status: false, message: "please provide title credentials" });
@@ -95,106 +94,106 @@ const validproduct =  function(req,res,next){
         return res.status(400).send({ status: false, message: "please provide style credentials" });
     }
 
-     if (!isValidenum(availableSizes)) {
+    if (!isValidenum(availableSizes)) {
         return res.status(400).send({ status: false, message: "please provide valid avalable size" });
     }
-     next()
+    next()
 
 }
-     const getcartvalid =  function(req,res,next){
-        const requestBody = req.body;
-        if (!isValidRequestBody(requestBody)) {
-            return res.status(400).send({ status: false, message: "please provide input credentials" });
-        }
-           
-        const  {userId,totalPrice,totalItems,items} = requestBody
-         
-        if (!isValid(userId)) {
-            return res.status(400).send({ status: false, message: "please provide description credentials" });
-        }
+const getcartvalid = function(req, res, next) {
+    const requestBody = req.body;
+    if (!isValidRequestBody(requestBody)) {
+        return res.status(400).send({ status: false, message: "please provide input credentials" });
+    }
 
-        if (!isValidObjectId(userId)) {
-            return res.status(400).send({ status: false, message: "please provide description credentials" });
-        }
-        
-        if (!/^\d{1,8}(?:\.\d{1,4})?$/.test(totalPrice)) {
-            return res.status(400).send({ status: false, message: "total price should be valid" });
-        }
+    const { userId, totalPrice, totalItems, items } = requestBody
 
-        if (!/^\d[1-70]?$/.test(totalItems)) {
-            return res.status(400).send({ status: false, message: "Totalitem should be valid" });
-        }
-        next()
-     }
+    if (!isValid(userId)) {
+        return res.status(400).send({ status: false, message: "please provide description credentials" });
+    }
 
-     const postcart = function(req,res,next){
+    if (!isValidObjectId(userId)) {
+        return res.status(400).send({ status: false, message: "please provide description credentials" });
+    }
 
-         const requestBody = req.body;
-         if (!isValidRequestBody(requestBody)) {
-             return res.status(400).send({ status: false, message: "Please provide valid request body" })
-            }
-            
-        const  {userId,productId,quantity} = requestBody
-        if (!isValidObjectId(userId)) {
-            return res.status(400).send({ status: false, message: "Please provide valid User Id" })
-        }
-        if (!isValidObjectId(productId) || !validator.isValid(productId)) {
-            return res.status(400).send({ status: false, message: "Please provide valid Product Id" })
-        }
+    if (!/^\d{1,8}(?:\.\d{1,4})?$/.test(totalPrice)) {
+        return res.status(400).send({ status: false, message: "total price should be valid" });
+    }
 
-        if (!isValid(quantity)) {
-            return res.status(400).send({ status: false, message: "Please provide valid quantity & it must be greater than zero." })
-        }
-        next()
-     }
+    if (!/^\d[1-70]?$/.test(totalItems)) {
+        return res.status(400).send({ status: false, message: "Totalitem should be valid" });
+    }
+    next()
+}
 
-     const updateProduct=function(req, res, next){
-       
-        const requestBody = req.body;
-        if (!isValidRequestBody(requestBody)) {
-            return res.status(400).send({ status: false, message: "Please provide valid request body" })
-           }
+const postcart = function(req, res, next) {
 
-           //const  {productId} = requestBody
-           let params= req.params.productId
-        
-           if (!isValidObjectId (params)) {
-            return res.status(400).send({ status: false, message: "product Id is Not Valid" });
+    const requestBody = req.body;
+    if (!isValidRequestBody(requestBody)) {
+        return res.status(400).send({ status: false, message: "Please provide valid request body" })
+    }
 
-            
-        }
+    const { userId, productId, quantity } = requestBody
+    if (!isValidObjectId(userId)) {
+        return res.status(400).send({ status: false, message: "Please provide valid User Id" })
+    }
+    if (!isValidObjectId(productId) || !validator.isValid(productId)) {
+        return res.status(400).send({ status: false, message: "Please provide valid Product Id" })
+    }
 
-        
-        next()
-     }
+    if (!isValid(quantity)) {
+        return res.status(400).send({ status: false, message: "Please provide valid quantity & it must be greater than zero." })
+    }
+    next()
+}
 
-     const creatOrder =  function(req,res,next){
-        const requestBody = req.body;
-        if (!isValidRequestBody(requestBody)) {
-            return res.status(400).send({ status: false, message: "please provide input credentials" });
-        }
-           
-        const  {cartId,totalPrice,totalItems} = requestBody
-         
-        if (!isValid(cartId)) {
-            return res.status(400).send({ status: false, message: "please provide description credentials" });
-        }
+const updateProduct = function(req, res, next) {
 
-        if (!isValidObjectId(cartId)) {
-            return res.status(400).send({ status: false, message: "please provide description credentials" });
-        }
-        
-        if (!/^\d{1,8}(?:\.\d{1,4})?$/.test(totalPrice)) {
-            return res.status(400).send({ status: false, message: "total price should be valid" });
-        }
+    const requestBody = req.body;
+    if (!isValidRequestBody(requestBody)) {
+        return res.status(400).send({ status: false, message: "Please provide valid request body" })
+    }
 
-        if (!/^\d[1-70]?$/.test(totalItems)) {
-            return res.status(400).send({ status: false, message: "Totalitem should be valid" });
-        }
-        next()
-     }
+    //const  {productId} = requestBody
+    let params = req.params.productId
+
+    if (!isValidObjectId(params)) {
+        return res.status(400).send({ status: false, message: "product Id is Not Valid" });
 
 
-    
+    }
 
-module.exports = {validLogin , validproduct ,postcart, getcartvalid,updateProduct,creatOrder}
+
+    next()
+}
+
+const creatOrder = function(req, res, next) {
+    const requestBody = req.body;
+    if (!isValidRequestBody(requestBody)) {
+        return res.status(400).send({ status: false, message: "please provide input credentials" });
+    }
+
+    const { cartId, totalPrice, totalItems } = requestBody
+
+    if (!isValid(cartId)) {
+        return res.status(400).send({ status: false, message: "please provide description credentials" });
+    }
+
+    if (!isValidObjectId(cartId)) {
+        return res.status(400).send({ status: false, message: "please provide description credentials" });
+    }
+
+    if (!/^\d{1,8}(?:\.\d{1,4})?$/.test(totalPrice)) {
+        return res.status(400).send({ status: false, message: "total price should be valid" });
+    }
+
+    if (!/^\d[1-70]?$/.test(totalItems)) {
+        return res.status(400).send({ status: false, message: "Totalitem should be valid" });
+    }
+    next()
+}
+
+
+
+
+module.exports = { validLogin, validproduct, postcart, getcartvalid, updateProduct, creatOrder }

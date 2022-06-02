@@ -1,33 +1,33 @@
-const orderModel=require("../models/orderModel")
+const orderModel = require("../models/orderModel")
 const userModel = require("../models/userModel")
-const cartModel=require("../models/cartModel")
-//const validator=require("../validator/validator")
-const mongoose=require('mongoose')
+const cartModel = require("../models/cartModel")
+    //const validator=require("../validator/validator")
+const mongoose = require('mongoose')
 
 const creatOrder = async(req, res) => {
     try {
         const userId = req.params.userId;
         const requestBody = req.body;
         const userIdFromToken = req.userId;
-        
-        const {cartId,  cancellable, status } = requestBody;
-        
+
+        const { cartId, cancellable, status } = requestBody;
+
         const searchUser = await userModel.findOne({ _id: userId });
         if (!searchUser) {
-            return res.status(400).send({ status: false, message: `user doesn't exists for ${userId}`});
+            return res.status(400).send({ status: false, message: `user doesn't exists for ${userId}` });
         }
-        //Authentication & authorization
+        // //Authentication & authorization
         if (searchUser._id.toString() != userIdFromToken) {
             return res.status(401).send({ status: false, message: `Unauthorized access! User's info doesn't match` });
-     
-         
+
+
         }
-        
+
 
         //searching cart to match the cart by userId whose is to be ordered.
-        const searchCartDetails = await cartModel.findOne({    _id: cartId,    userId: userId,});
-       
-        let totalQuantity = searchCartDetails.items.map((x) => x.quantity).reduce((previousValue, currentValue) =>previousValue + currentValue);
+        const searchCartDetails = await cartModel.findOne({ _id: cartId, userId: userId, });
+
+        let totalQuantity = searchCartDetails.items.map((x) => x.quantity).reduce((previousValue, currentValue) => previousValue + currentValue);
 
         //object destructuring for response body.
         const orderDetails = {
@@ -41,18 +41,18 @@ const creatOrder = async(req, res) => {
         };
         const savedOrder = await orderModel.create(orderDetails)
         return res.status(200).send({ status: true, message: "Order placed.", data: savedOrder });
-    
+
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message });
     }
 };
 
 
-const isValidRequestBody = function (requestBody) {
+const isValidRequestBody = function(requestBody) {
     return Object.keys(requestBody).length > 0;
 }
 
-const isValid = function (value) {
+const isValid = function(value) {
     if (typeof value === 'undefined' || value === null) return false
     if (typeof value === 'string' && value.trim().length === 0) return false
     return true;
@@ -66,9 +66,9 @@ const updateOrderDetail = async function(req, res) {
     try {
         let requestBody = req.body;
         const userId = req.params.userId
-        //const jwtUserId = req.userId
+            //const jwtUserId = req.userId
 
-        const { orderId,status } = requestBody
+        const { orderId, status } = requestBody
 
         //  authroization
 
@@ -101,7 +101,7 @@ const updateOrderDetail = async function(req, res) {
         if (!(checkOrder.cancellable === true)) {
             return res.status(400).send({ status: false, message: 'order didnt have the cancellable policy ' })
         }
-        let updateOrder = await orderModel.findOneAndUpdate({ _id: orderId  },{status:status}, { new: true })
+        let updateOrder = await orderModel.findOneAndUpdate({ _id: orderId }, { status: status }, { new: true })
         res.status(200).send({ status: true, msg: 'sucesfully updated', data: updateOrder })
 
     } catch (error) {
@@ -110,5 +110,4 @@ const updateOrderDetail = async function(req, res) {
 }
 
 
-module.exports={creatOrder,updateOrderDetail}
-
+module.exports = { creatOrder, updateOrderDetail }
